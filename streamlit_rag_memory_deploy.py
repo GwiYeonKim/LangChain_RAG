@@ -42,15 +42,29 @@ def create_vector_store(_docs):
 
 #만약 기존에 저장해둔 ChromaDB가 있는 경우, 이를 로드
 @st.cache_resource
-def get_vectorstore(_docs):
+#def get_vectorstore(_docs):
     #persist_directory = "./FAISS_db"
+    #if os.path.exists(persist_directory):
+    #    return FAISS(
+    #        persist_directory=persist_directory,
+    #        embedding_function=OpenAIEmbeddings(model='text-embedding-3-small')
+    #    )
+    #else:
+    #    return create_vector_store(_docs)
+    
+
+def get_vectorstore(_docs):
+    persist_directory = "./FAISS_db"
+    embeddings = OpenAIEmbeddings(model='text-embedding-3-small')
+    
     if os.path.exists(persist_directory):
-        return FAISS(
-            persist_directory=persist_directory,
-            embedding_function=OpenAIEmbeddings(model='text-embedding-3-small')
-        )
+        # FAISS는 직접 save/load로 관리해야 함
+        return FAISS.load_local(persist_directory, embeddings)
     else:
-        return create_vector_store(_docs)
+        # 새로 생성하고 저장
+        vectorstore = FAISS.from_documents(_docs, embeddings)
+        vectorstore.save_local(persist_directory)
+        return vectorstore
     
 # PDF 문서 로드-벡터 DB 저장-검색기-히스토리 모두 합친 Chain 구축
 @st.cache_resource
