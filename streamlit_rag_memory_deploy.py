@@ -11,13 +11,13 @@ from langchain.chains import create_history_aware_retriever, create_retrieval_ch
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_community.chat_message_histories.streamlit import StreamlitChatMessageHistory
 
-__import__('pysqlite3')
-import sys
-sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+#__import__('pysqlite3')
+#import sys
+#sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 
-from langchain_chroma import Chroma
+#from langchain_chroma import Chroma
+#from FAISS import FAISS
 os.environ["OPENAI_API_KEY"] = st.secrets['OPENAI_API_KEY']
-
 
 #cache_resource로 한번 실행한 결과 캐싱해두기
 @st.cache_resource
@@ -30,8 +30,8 @@ def load_and_split_pdf(file_path):
 def create_vector_store(_docs):
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
     split_docs = text_splitter.split_documents(_docs)
-    persist_directory = "./chroma_db"
-    vectorstore = Chroma.from_documents(
+    persist_directory = "./FAISS_db"
+    vectorstore = FAISS.from_documents(
         split_docs, 
         OpenAIEmbeddings(model='text-embedding-3-small'),
         persist_directory=persist_directory
@@ -41,9 +41,9 @@ def create_vector_store(_docs):
 #만약 기존에 저장해둔 ChromaDB가 있는 경우, 이를 로드
 @st.cache_resource
 def get_vectorstore(_docs):
-    persist_directory = "./chroma_db"
+    persist_directory = "./FAISS_db"
     if os.path.exists(persist_directory):
-        return Chroma(
+        return FAISS(
             persist_directory=persist_directory,
             embedding_function=OpenAIEmbeddings(model='text-embedding-3-small')
         )
