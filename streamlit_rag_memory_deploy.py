@@ -10,6 +10,7 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains import create_history_aware_retriever, create_retrieval_chain
 from langchain_core.runnables.history import RunnableWithMessageHistory
 from langchain_community.chat_message_histories.streamlit import StreamlitChatMessageHistory
+from langchain_community.vectorstores import FAISS
 
 #__import__('pysqlite3')
 #import sys
