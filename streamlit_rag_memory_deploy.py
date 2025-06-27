@@ -32,18 +32,18 @@ def load_and_split_pdf(file_path):
 def create_vector_store(_docs):
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=0)
     split_docs = text_splitter.split_documents(_docs)
-    persist_directory = "./FAISS_db"
+    #persist_directory = "./FAISS_db"
     vectorstore = FAISS.from_documents(
         split_docs, 
         OpenAIEmbeddings(model='text-embedding-3-small'),
-        persist_directory=persist_directory
+        #persist_directory=persist_directory
     )
     return vectorstore
 
 #만약 기존에 저장해둔 ChromaDB가 있는 경우, 이를 로드
 @st.cache_resource
 def get_vectorstore(_docs):
-    persist_directory = "./FAISS_db"
+    #persist_directory = "./FAISS_db"
     if os.path.exists(persist_directory):
         return FAISS(
             persist_directory=persist_directory,
